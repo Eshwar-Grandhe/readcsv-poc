@@ -5,6 +5,7 @@ import '../App.css'
 export default function ShowCSV() {
       
     let [csvData, setCSVData ]= useState([]);
+    let [filterData, setFilterData ]= useState([]);
     let [query,setQuery ]= useState();
     const temp=[]
 
@@ -29,12 +30,21 @@ export default function ShowCSV() {
     function handleSubmit(){
         csvData.filter((data)=>{
             const obj = data
-            if(obj['Email'].match(query)){
+            if(obj['City'].match(query)|| 
+            obj['Company'].match(query)||
+            obj['Country'].match(query)||
+            obj['Customer Id'].match(query)||
+            obj['Email'].match(query)||
+            obj['First Name'].match(query)||
+            obj['Last Name'].match(query)||
+            obj['Phone 1'].match(query)||
+            obj['Phone 2'].match(query)||
+            obj['Website'].match(query)){
                 temp.push(obj)
             }
             return temp
         })
-        console.log(temp)
+        setFilterData(temp)
     }
 
     function parsecsv(csvText){
@@ -77,7 +87,7 @@ export default function ShowCSV() {
       <input type="button" value="Click to display the csv" onClick={loadCSV} />
       <br />
       <>
-      {temp.lenghth===0 && csvData.length === 0 ? (
+      {filterData.lenghth===0 && csvData.length === 0 ? (
         <p>No data available.</p>
       ) : 
         <table id='customers'>
@@ -91,8 +101,8 @@ export default function ShowCSV() {
             </tr>
           </thead>
           <tbody>
-            {temp.length>0? 
-            temp.map((row, index) => (
+            {filterData.length>0? 
+            filterData.map((row, index) => (
                 <tr key={index}>
                   {headers.map((header, columnIndex) => (
                     <td key={columnIndex} >
