@@ -5,8 +5,8 @@ import '../App.css'
 export default function ShowCSV() {
       
     let [csvData, setCSVData ]= useState([]);
-    let [filterData, setFilterData]=useState([]);
     let [query,setQuery ]= useState();
+    const temp=[]
 
     // link for the raw data
     const link = 'https://media.githubusercontent.com/media/datablist/sample-csv-files/main/files/customers/customers-100.csv'
@@ -30,12 +30,11 @@ export default function ShowCSV() {
         csvData.filter((data)=>{
             const obj = data
             if(obj['Email'].match(query)){
-                
-                // setFilterData(filterData=>[...filterData,{...data}])
-                filterData.push(obj)
+                temp.push(obj)
             }
-         console.log(filterData)
+            return temp
         })
+        console.log(temp)
     }
 
     function parsecsv(csvText){
@@ -78,7 +77,7 @@ export default function ShowCSV() {
       <input type="button" value="Click to display the csv" onClick={loadCSV} />
       <br />
       <>
-      {filterData.lenghth===0 && csvData.length === 0 ? (
+      {temp.lenghth===0 && csvData.length === 0 ? (
         <p>No data available.</p>
       ) : 
         <table id='customers'>
@@ -92,8 +91,8 @@ export default function ShowCSV() {
             </tr>
           </thead>
           <tbody>
-            {filterData.length>0? 
-            filterData.map((row, index) => (
+            {temp.length>0? 
+            temp.map((row, index) => (
                 <tr key={index}>
                   {headers.map((header, columnIndex) => (
                     <td key={columnIndex} >
