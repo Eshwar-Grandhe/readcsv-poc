@@ -5,26 +5,37 @@ import '../App.css'
 export default function ShowCSV() {
       
     let [csvData, setCSVData ]= useState([]);
+    let [filterData, setFilterData]=useState([]);
+    let [query,setQuery ]= useState();
 
     // link for the raw data
     const link = 'https://media.githubusercontent.com/media/datablist/sample-csv-files/main/files/customers/customers-100.csv'
     
     // function to load the csv file from remote location
     async function loadCSV(){
-        console.log("Hi from loadCSV function");
 
         // get the file from the link
         // (remote location), first try with mock data
 
         Papa.parse(link,{download:true,complete: function(results,file){
-            // console.log(results.data)
-            // console.log(file)
             // send it to parse csv function to 
             // remove spaces and trim the values
             // making it better for searching
             parsecsv(results.data);
         }});
 
+    }
+
+    function handleSubmit(){
+        csvData.filter((data)=>{
+            const obj = data
+            if(obj['Email'].match(query)){
+                
+                // setFilterData(filterData=>[...filterData,{...data}])
+                filterData.push(obj)
+            }
+         console.log(filterData)
+        })
     }
 
     function parsecsv(csvText){
@@ -60,12 +71,16 @@ export default function ShowCSV() {
   return (
     <div>
       <h1>Read CSV Poc</h1>
+      <div>
+        <input type="search" placeholder='Search here..' onChange={(event)=>setQuery(event.target.value)}/>
+        <input type="button" value='search' onClick={handleSubmit}/>  
+      </div>
       <input type="button" value="Click to display the csv" onClick={loadCSV} />
       <br />
       <>
-      {csvData.length === 0 ? (
+      {filterData.lenghth===0 && csvData.length === 0 ? (
         <p>No data available.</p>
-      ) : (
+      ) : 
         <table id='customers'>
           <thead>
             <tr>
@@ -77,7 +92,17 @@ export default function ShowCSV() {
             </tr>
           </thead>
           <tbody>
-            {csvData.map((row, index) => (
+            {filterData.length>0? 
+            filterData.map((row, index) => (
+                <tr key={index}>
+                  {headers.map((header, columnIndex) => (
+                    <td key={columnIndex} >
+                      {row[header]}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            :csvData.map((row, index) => (
               <tr key={index}>
                 {headers.map((header, columnIndex) => (
                   <td key={columnIndex} >
@@ -88,7 +113,7 @@ export default function ShowCSV() {
             ))}
           </tbody>
         </table>
-      )}
+      }
     </>
     </div>
   );
