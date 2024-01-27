@@ -2,10 +2,24 @@ body{
   padding: 10px;
 }
 
+.button{
+  padding: 10px;
+  border-radius: 3px;
+  width: auto;
+  background-color: #585eca;
+  color: white;
+  border-color: #585eca;
+  font-size: small;
+}
+
+#search{
+  width: auto;
+  height: 40px;
+}
+
 #customers {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
-  width: 100%;
 }
 
 #customers td, #customers th {

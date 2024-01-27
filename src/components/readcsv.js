@@ -1,24 +1,22 @@
+// Necessary imports
 import { useState } from 'react';
 import Papa from 'papaparse'
 import '../App.css'
 
 export default function ShowCSV() {
-      
+    
+    // state and global variables
     let [csvData, setCSVData ]= useState([]);
     let [filterData, setFilterData ]= useState([]);
     let [query,setQuery ]= useState();
-    const temp=[]
-
-    // link for the raw data
-    const link = 'https://media.githubusercontent.com/media/datablist/sample-csv-files/main/files/customers/customers-100.csv'
+    const temp=[];
     
     // function to load the csv file from remote location
     async function loadCSV(){
 
-        // get the file from the link
-        // (remote location), first try with mock data
-
-        Papa.parse(link,{download:true,complete: function(results,file){
+        // get the file from the link(remote location)
+        Papa.parse(process.env.REACT_APP_CSV_LINK,{download:true,complete: function(results,file){
+            // Papa.parse(link,{download:true,complete: function(results,file){
             // send it to parse csv function to 
             // remove spaces and trim the values
             // making it better for searching
@@ -27,26 +25,22 @@ export default function ShowCSV() {
 
     }
 
+    // function for the search query
     function handleSubmit(){
+
         csvData.filter((data)=>{
-            const obj = data
-            if(obj['City'].match(query)|| 
-            obj['Company'].match(query)||
-            obj['Country'].match(query)||
-            obj['Customer Id'].match(query)||
-            obj['Email'].match(query)||
-            obj['First Name'].match(query)||
-            obj['Last Name'].match(query)||
-            obj['Phone 1'].match(query)||
-            obj['Phone 2'].match(query)||
-            obj['Website'].match(query)){
-                temp.push(obj)
-            }
-            return temp
+            const obj = data;
+            headers.map(item=>{
+                if(query!==''&& obj[item].match(query)){
+                    temp.push(obj)
+                }
+            })
+            return temp;
         })
-        setFilterData(temp)
+        setFilterData(temp);
     }
 
+    // function to parse the csv data
     function parsecsv(csvText){
 
         // get all the headers
@@ -72,20 +66,29 @@ export default function ShowCSV() {
                 parsedData.push(rowitem);
             }
         }
+        // setting it to the variable
         setCSVData(parsedData);        
     }
 
+    // to get the headers from the csv file
     const headers = csvData.length > 0 ? Object.keys(csvData[0]) : [];
 
   return (
     <div>
       <h1>Read CSV Poc</h1>
       <div>
-        <input type="search" placeholder='Search here..' onChange={(event)=>setQuery(event.target.value)}/>
-        <input type="button" value='search' onClick={handleSubmit}/>  
+        <input className='button' type="button" value="Click to display the csv" onClick={loadCSV} />
+        <br />
+        <br />
+        <div>
+            <input id="search" type="search" placeholder='Search here..' onChange={(event)=>{
+                setQuery(event.target.value)
+            }}/>
+            <input className='button' type="button" value='Search' onClick={handleSubmit}/>  
+        </div>
       </div>
-      <input type="button" value="Click to display the csv" onClick={loadCSV} />
       <br />
+      <div>
       <>
       {filterData.lenghth===0 && csvData.length === 0 ? (
         <p>No data available.</p>
@@ -124,6 +127,7 @@ export default function ShowCSV() {
         </table>
       }
     </>
+      </div>
     </div>
   );
 
